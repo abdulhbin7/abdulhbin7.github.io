@@ -234,6 +234,72 @@
             border-color: rgba(135, 206, 235, 0.6);
         }
 
+        /* Copy Notification Styles */
+        .copy-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, rgba(135, 206, 235, 0.95), rgba(147, 112, 219, 0.90));
+            color: #fff;
+            padding: 25px 40px;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.6),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                0 0 40px rgba(135, 206, 235, 0.6);
+            z-index: 10000;
+            text-align: center;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            animation: popIn 0.3s ease-out forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1) rotate(5deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes popOut {
+            0% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0) rotate(10deg);
+                opacity: 0;
+            }
+        }
+
+        .copy-notification.hide {
+            animation: popOut 0.3s ease-in forwards;
+        }
+
+        .copy-notification::before {
+            content: '✓';
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: checkmark 0.5s ease-out;
+        }
+
+        @keyframes checkmark {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
         /* Sections */
         .section {
             background: linear-gradient(135deg, rgba(29, 39, 58, 0.90), rgba(35, 45, 65, 0.85));
@@ -622,7 +688,7 @@
             <p>Computer Science Graduate | AI & Data Engineer</p>
             <div class="contact-info">
                 <a href="mailto:abdulhbin7@gmail.com" class="contact-item">✉️ Email</a>
-                <a href="tel:+966504773627" class="contact-item">📱 +966504773627</a>
+                <span class="contact-item" onclick="copyPhone(event)" style="cursor: pointer;">📱 +966504773627</span>
                 <a href="https://linkedin.com/in/abdullah-suwaylih" target="_blank" class="contact-item">💼 LinkedIn</a>
                 <a href="https://github.com/abdulhbin7" target="_blank" class="contact-item">💻 GitHub</a>
                 <a href="Abdullah_CV.pdf" target="_blank" class="contact-item">📄 View CV</a>
@@ -833,8 +899,36 @@
             <p>✨ Crafted with passion and innovation ✨</p>
         </footer>
     </div>
+    
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Copy phone number function - GLOBAL SCOPE
+        window.copyPhone = function(event) {
+            event.preventDefault();
+            const phoneNumber = '+966504773627';
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(phoneNumber).then(function() {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.innerHTML = 'تم نسخ الرقم!<br>Number Copied!';
+                document.body.appendChild(notification);
+                
+                // Remove notification after 2 seconds
+                setTimeout(function() {
+                    notification.classList.add('hide');
+                    setTimeout(function() {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                alert('تم نسخ الرقم: ' + phoneNumber);
+            });
+        };
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Enhanced mystical particle effects
         function createFloatingStars() {
             const starsContainer = document.createElement('div');
@@ -1059,9 +1153,103 @@
         
         // Initialize constellation effect
         drawConstellation();
-
         // Resize canvas on window resize
         window.addEventListener('resize', function() {
             const canvas = document.querySelector('canvas');
             if (canvas) {
-       
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+
+        // Copy phone number functionality
+        document.querySelectorAll('a[href^="tel:"]').forEach(phoneLink => {
+            phoneLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Extract phone number from href attribute
+                const phoneNumber = this.getAttribute('href').replace('tel:', '');
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(phoneNumber)
+                    .then(() => {
+                        // Create and show notification
+                        const notification = document.createElement('div');
+                        notification.textContent = `✅ تم نسخ الرقم: ${phoneNumber}`;
+                        notification.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: linear-gradient(135deg, rgba(29, 39, 58, 0.95), rgba(45, 55, 85, 0.98));
+                            color: #87ceeb;
+                            padding: 15px 25px;
+                            border-radius: 15px;
+                            border: 2px solid rgba(135, 206, 235, 0.6);
+                            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4), 0 0 30px rgba(135, 206, 235, 0.3);
+                            font-size: 1.1rem;
+                            z-index: 10000;
+                            backdrop-filter: blur(10px);
+                            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2s forwards;
+                            text-align: center;
+                            direction: rtl;
+                            font-weight: 500;
+                        `;
+                        
+                        // Add animation styles
+                        const style = document.createElement('style');
+                        style.textContent = `
+                            @keyframes slideIn {
+                                from {
+                                    transform: translateX(100%);
+                                    opacity: 0;
+                                }
+                                to {
+                                    transform: translateX(0);
+                                    opacity: 1;
+                                }
+                            }
+                            
+                            @keyframes fadeOut {
+                                from {
+                                    opacity: 1;
+                                    transform: translateX(0);
+                                }
+                                to {
+                                    opacity: 0;
+                                    transform: translateX(100%);
+                                }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                        
+                        // Add magical effect
+                        notification.style.boxShadow += ', 0 0 40px rgba(135, 206, 235, 0.5)';
+                        
+                        document.body.appendChild(notification);
+                        
+                        // Remove notification after animation
+                        setTimeout(() => {
+                            if (document.body.contains(notification)) {
+                                document.body.removeChild(notification);
+                            }
+                        }, 2300);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                        // Fallback for browsers that don't support clipboard API
+                        const tempInput = document.createElement('input');
+                        tempInput.value = phoneNumber;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                        
+                        // Show fallback notification
+                        alert(`تم نسخ الرقم: ${phoneNumber}`);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
+        // Resize canvas on window resiz
